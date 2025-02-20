@@ -2,6 +2,8 @@ import sounddevice as sd
 import scipy.io.wavfile as wav
 import whisper
 import keyboard
+from langdetect import detect
+from googletrans import Translator
 
 def record_audio(filename, duration=5, fs=16000):
     print(f"Recording {filename}...")
@@ -25,12 +27,38 @@ def transcribe_audio(audio_path, model_size="base"):
         file.write(transcription)
     print(f"Transcription saved as {transcript_filename}")
     
-    return transcription
+    return transcription, transcript_filename
+
+def detect_and_translate(text):
+    translator = Translator()
+    detected_language = detect(text)
+    language = "na"
+    
+    if detected_language == 'en':
+        translated = translator.translate(text, src='en', dest='de').text
+        language = "de_Translated"
+    elif detected_language == 'de':
+        translated = translator.translate(text, src='de', dest='en').text
+        language = "en_Translated"
+    else:
+        translated = text  # If the language is neither English nor German, return the original text
+    
+    return translated, language
 
 if __name__ == "__main__":
     filename = "Output/voice/" + input("Enter the name for the WAV file (without extension): ") + ".wav"
     print("Press spacebar to start recording...")
     keyboard.wait('space')
     record_audio(filename, duration=5)
-    transcription = transcribe_audio(filename)
+    transcription, transcript_filename = transcribe_audio(filename)
     print(f"Transcribed Text for {filename}: {transcription}")
+    
+    # Translate the transcription
+    translated_text, language = detect_and_translate(transcription)
+    translated_filename = transcript_filename.replace("text/", "translated_text/").replace(".txt", f"_{language}.txt")
+    
+    
+    with open(translated_filename, "w", encoding="utf-8") as file:
+        file.write(translated_text)
+    
+    print(f"Translated text saved as {translated_filename}")
