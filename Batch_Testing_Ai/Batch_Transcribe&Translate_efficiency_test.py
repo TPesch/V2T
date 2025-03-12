@@ -24,11 +24,9 @@ def detect_and_translate(text):
     
     return translated, language
 
-if __name__ == "__main__":
-    input_folder = "Batch_Testing_Ai/Voices/English"
-    output_folder = "Batch_Testing_Ai/Voices/English/Translated"
-    os.makedirs(output_folder, exist_ok=True)
-    
+
+
+def transcribleFunction(transcribe_audio, detect_and_translate, input_folder, output_folder):
     for i in range(1, 17):
         input_file = os.path.join(input_folder, f"sample{i}.wav")
         
@@ -48,3 +46,15 @@ if __name__ == "__main__":
             print(f"Translated text for sample{i} saved to {output_file}")
         else:
             print(f"Could not transcribe audio file: {input_file}")
+
+if __name__ == "__main__":
+    input_folder = "Batch_Testing_Ai/Voices/English"
+    output_folder = "Batch_Testing_Ai/Voices/English/Translated"
+    os.makedirs(output_folder, exist_ok=True)
+    
+    transcribleFunction(transcribe_audio, detect_and_translate, input_folder, output_folder)
+    
+    input_folder = "Batch_Testing_Ai/Voices/German"
+    output_folder = "Batch_Testing_Ai/Voices/German/Translated"
+    transcribleFunction(transcribe_audio, detect_and_translate, input_folder, output_folder)
+
